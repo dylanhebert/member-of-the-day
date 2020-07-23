@@ -1,6 +1,6 @@
 # Member of the Day: Main File
 # Written by: Dylan Hebert (The Green Donut)
-# https://discordapp.com/api/oauth2/authorize?client_id=501862689098694676&permissions=268545040&scope=bot
+# Bot permissions: 268545040
 #
 
 import discord
