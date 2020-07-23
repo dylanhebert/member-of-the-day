@@ -4,9 +4,12 @@
 
 import json
 from conf.logger import logger
+import pathlib
+
+DIR_PATH = str(pathlib.Path().absolute())
 
 # global variables
-servLstPath = '/home/pi/code_pi/motd/data/motd_servers.json'
+servLstPath = DIR_PATH + '/data/motd_servers.json'
 runTimes = [] # list of run times for looper
 preTimes = [] # list of hour before times for looper
 

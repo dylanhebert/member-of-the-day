@@ -9,12 +9,15 @@ import asyncio
 import json
 from conf.logger import logger
 import data.motd_times as rt
+import pathlib
+
+DIR_PATH = str(pathlib.Path().absolute())
 
 # --- VARIABLES ---
 # paths to json files
-serverPath = '/home/pi/code_pi/motd/data/motd_servers.json'
-scorePath = '/home/pi/code_pi/motd/data/motd_scores.json'
-votePath = '/home/pi/code_pi/motd/data/motd_voting.json'
+serverPath = DIR_PATH + '/data/motd_servers.json'
+scorePath = DIR_PATH + '/data/motd_scores.json'
+votePath = DIR_PATH + '/data/motd_voting.json'
 # weekday to wipe all votes
 dayToWipe = 6
 
