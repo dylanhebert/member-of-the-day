@@ -33,6 +33,8 @@ trap ctrl_c INT
 writelog "Starting..."
 source venv/bin/activate
 writelog "Activated venv..."
+cd member-of-the-day
+writelog "cd into member-of-the-day..."
 while $LOOPER ; do
   python member-of-the-day.py
   writelog "Exited with status $?"

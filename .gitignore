@@ -1,6 +1,5 @@
 venv/
 *.json
 *.log
-*.code-workspace
 __pycache__/
 _bot_info.txt
