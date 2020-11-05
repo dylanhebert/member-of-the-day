@@ -311,6 +311,13 @@ async def getVoteLst(serv): # server object
         logger.info(f'Bad member IDs in vote list! Deleted: {k}!')
     return voteLst
 
+
+#### GET DICT OF CURRENT VOTES ###
+async def getVoteDict(serv): # server object
+    votingEntry = await getServerEntry(votePath,serv.id)
+    voteCounts = votingEntry['voteCounts']
+    return voteCounts
+
 #### DEL MOTD VOTES IF VOTED ###
 async def delVotesMotd(servID,motdID): # server id, motd id
     votingEntry = await getServerEntry(votePath,servID)

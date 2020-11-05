@@ -17,6 +17,11 @@ import asyncio
 botInfo = open("_bot_info.txt", "r")
 botToken = botInfo.readline()
 
+# new for discord.py 1.5
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
+
 #gavinRoleColor = discord.Color(0x62dbff)
 
 # set prefix
@@ -29,7 +34,8 @@ def get_prefix(bot, message):
 # create bot object
 bot = commands.Bot( command_prefix = get_prefix, 
                     description = 'Member of the Day by Green Donut',
-                    pm_help = True)
+                    pm_help = True,
+                    intents=intents)
 gamePlaying = discord.Game(name='!vote | !score')
 # gamePlaying = discord.Streaming(name='!vote | !score',
 #                                 url='https://www.twitch.tv/thegreendonut')

@@ -58,8 +58,7 @@ async def runMOTD(bot,servID,postChanID,motdRoleID,exemptIDs,currentMOTD):
     # if no MOTD was picked last time
     if prevMem == None:
         if memLeft == False:
-            await channel.send(f'There was no previous {motdRole.name} so anyone is eligible!')
-            # await channel.send(f'Good luck to the candidates...')
+            await channel.send(f'Good luck to the candidates...')
         else:
             await channel.send(f'The previous {motdRole.name} left the server. Fuck them')
 
@@ -93,65 +92,109 @@ async def runMOTD(bot,servID,postChanID,motdRoleID,exemptIDs,currentMOTD):
     else: 
         for i in server.members:
             logger.debug(f'Checking {i.name}...')
-            if str(i.status) == 'online':
-                if not i.bot:
-                    if any(role.id in exemptIDs for role in i.roles):
-                        logger.debug(f'Passed {i.name}...')
-                        pass
-                    else:
-                        onMembers.append(i)
-                        logger.debug(f'  Appended {i.name}!')
+            # TEMP
+            # if str(i.status) == 'online':
+            if not i.bot:
+                if any(role.id in exemptIDs for role in i.roles):
+                    logger.debug(f'Passed {i.name}...')
+                    pass
+                else:
+                    onMembers.append(i)
+                    logger.debug(f'  Appended {i.name}!')
+
+    # PRESIDENT
+    # Get top voted member(s)
+    logger.debug('Getting vote dict...')
+    voteCounts = await fs.getVoteDict(server)
+    topMem = []
+    topMemCount = 0
+    # get member objects from keys
+    for k,v in voteCounts.items():
+        mem = server.get_member(int(k))
+        # append number of mems to list based on value amount
+        if mem != None:
+            if v > topMemCount:
+                logger.debug(f'adding member to top: {mem.name}')
+                topMem.clear()
+                topMem.append(mem)
+                topMemCount = v
+                logger.debug(f'added member to top: {mem.name}')
+            elif v == topMemCount:
+                topMem.append(mem)
+                logger.debug(f'added TIE member to top: {mem.name}')
 
     # append voted members
     logger.debug('Getting vote list...')
     for i in await fs.getVoteLst(server):
         logger.debug(f'checking {i.name}...')
-        if str(i.status) == 'online' and i.id != prevMem.id:
-            onMembers.append(i)
-            logger.debug(f'  Appended {i.name}!')
+        # TEMP
+        # if str(i.status) == 'online' and i.id != prevMem.id:
+        onMembers.append(i)
+        logger.debug(f'  Appended {i.name}!')
     potentialMem = len(onMembers)
 
     # if at least 1 eligible 'online' member
     logger.debug('Picking member...')
     if onMembers:
-        await asyncio.sleep(5)
-        randomMemNumber = random.randint(0, (potentialMem -1))
-        chosenMotdMember = onMembers[randomMemNumber]
-        await chosenMotdMember.add_roles(motdRole)
-        await fs.updateServerVal(fs.serverPath,server.id,'currentMOTD',chosenMotdMember.id)
-        logger.debug('Updated currentMOTD...')
-        await fs.updateScores(servID,chosenMotdMember.id)
-        logger.debug('Updated score...')
-        await fs.delVotesMotd(servID,chosenMotdMember.id)
-        logger.debug('Updated votes...')
-        logger.info(f'{chosenMotdMember.name} was chosen for {motdRole.name} in {server.name}.')
-        await channel.send(f'Grats {chosenMotdMember.mention}, you are the {motdRole.mention} and you can now post in the secret chat!')
-        # await channel.send(f'{chosenMotdMember.mention} has been elected as the new President of {server.name}!!! @everyone')
-        # await channel.send(f'grats {chosenMotdMember.name}, youre the {motdRole.name} and you can now post in the secret chat')
+        # TEMP
+        await asyncio.sleep(3)
+        await channel.send(f'5')
+        await asyncio.sleep(1)
+        await channel.send(f'4')
+        await asyncio.sleep(1)
+        await channel.send(f'3')
+        await asyncio.sleep(1)
+        await channel.send(f'2')
+        await asyncio.sleep(1)
+        await channel.send(f'1')
+        await asyncio.sleep(2)
+        # TEMP
+        # await asyncio.sleep(5)
+        if len(topMem) == 1:
+            await channel.send(f'{topMem[0].mention} had the most votes and is automatically put in the running!')
+        else:
+            await channel.send(f'There was a tie for most votes so these people are automatically in the running:')
+            for tieMem in topMem:
+                await asyncio.sleep(1)
+                await channel.send(f'{tieMem.mention}')
+        raceTotalCount = len(topMem)
+        await channel.send(f'Here are the other candidates that are chosen:')
+        await asyncio.sleep(2)
+        while raceTotalCount < 3:
+            randomMemNumber = random.randint(0, (potentialMem -1))
+            while onMembers[randomMemNumber] in topMem:
+                randomMemNumber = random.randint(0, (potentialMem -1))
+            chosenMotdMember = onMembers[randomMemNumber]
+            await channel.send(f'{chosenMotdMember.mention} is in the running!')
+            #await channel.send(f'grats {chosenMotdMember.name}, youre the {motdRole.name} and you can now post in the secret chat')
+            raceTotalCount += 1
+            await asyncio.sleep(2)
+        await channel.send(f'Vote for one of these candidates to become President of {server.name}!! @everyone')
 
     # if no eligible 'online' members
     else: 
-        chosenMotdMember = None
-        await fs.updateServerVal(fs.serverPath,server.id,'currentMOTD',None)
-        await fs.delVotesMotd(servID,None)
-        logger.info(f'No eligible {motdRole.name} in {server.name}.')
-        await channel.send('There are no eligible members right now.')
-        await asyncio.sleep(1)
-        await channel.send(f'I will select a new {motdRole.name} tomorrow.')
-    await asyncio.sleep(1)
-    # wipe votes if correct day
-    await fs.wipeVotesDay(server.id,channel)
-    logger.debug('Checked for vote wipe...')
-    # reset old and check for new events
-    await ev.runEvents(server.id,channel)
-    logger.debug('Reset old and checked for new events.')
+        return
+    #     chosenMotdMember = None
+    #     await fs.updateServerVal(fs.serverPath,server.id,'currentMOTD',None)
+    #     await fs.delVotesMotd(servID,None)
+    #     logger.info(f'No eligible {motdRole.name} in {server.name}.')
+    #     await channel.send('There are no eligible members right now.')
+    #     await asyncio.sleep(1)
+    #     await channel.send(f'I will select a new {motdRole.name} tomorrow.')
+    # await asyncio.sleep(1)
+    # # wipe votes if correct day
+    # await fs.wipeVotesDay(server.id,channel)
+    # logger.debug('Checked for vote wipe...')
+    # # reset old and check for new events
+    # await ev.runEvents(server.id,channel)
+    # logger.debug('Reset old and checked for new events.')
 
 # ----------------------------------------------------
 # ----------------------------------------------------
 
 
 # --- START CLASS ---
-class MOTDLooper(commands.Cog):
+class MOTDLooperPresident(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -160,7 +203,7 @@ class MOTDLooper(commands.Cog):
         self.bot.bg_task = self.bot.loop.create_task(self.looperTask())
 
     async def on_ready(self):
-        logger.debug('MOTD - LOOPER Cog Ready')
+        logger.debug('MOTD - LOOPER PRESIDENT Cog Ready')
 
     async def looperTask(self):
         await self.bot.wait_until_ready()
@@ -243,4 +286,4 @@ class MOTDLooper(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(MOTDLooper(bot))
+    bot.add_cog(MOTDLooperPresident(bot))

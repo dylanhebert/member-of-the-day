@@ -293,6 +293,10 @@ class MOTDCommands(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.guild)
     async def score(self, ctx):
+        # TEMP
+        # await ctx.send(f'Scores are hidden right now!')
+        # return
+        # STARTS HERE
         serverEntry = await fs.getServerEntry(fs.serverPath,ctx.guild.id)
         votingEntry = await fs.getServerEntry(fs.votePath,ctx.guild.id)
         scoresEntry = await fs.getServerEntry(fs.scorePath,ctx.guild.id)
@@ -380,8 +384,10 @@ class MOTDCommands(commands.Cog):
 
     # members vote for someone to have a better chance at MOTD
     @commands.command()
-    @commands.cooldown(1, 1, commands.BucketType.guild)
+    @commands.cooldown(1, 0.5, commands.BucketType.guild)
     async def vote(self, ctx, *, member: discord.Member):
+        # TEMP
+        # await ctx.channel.purge(limit = 1)
         serverEntry = await fs.getServerEntry(fs.serverPath,ctx.guild.id)
         votingEntry = await fs.getServerEntry(fs.votePath,ctx.guild.id)
         currentMOTD = serverEntry['currentMOTD']
@@ -389,12 +395,13 @@ class MOTDCommands(commands.Cog):
         usedVotes = votingEntry['usedVotes']
         voteCounts = votingEntry['voteCounts']
         motdRole = discord.utils.get(ctx.guild.roles, id = serverEntry['motdRoleID'])
-        # if member votes themselves
+        # TEMP
+        #if member votes themselves
         if ctx.author.id == member.id:
             await ctx.send(f'You cannot vote for yourself!')
             return
         # if member votes a bot
-        elif member.bot:
+        if member.bot:
             await ctx.send(f'You cannot vote for bots!')
             return
         # if member votes current MOTD
@@ -433,7 +440,9 @@ class MOTDCommands(commands.Cog):
             await fs.updateServerEntry(fs.votePath,ctx.guild.id,votingEntry)
             logger.info(f'\n{ctx.author.name} voted for {member.name} in {ctx.guild.name}.'
                         f'\nTotal votes: {voteCounts[str(member.id)]}')
+            # TEMP
             await ctx.send(f'{ctx.author.name} voted for **{member.name}**. Total votes: **{voteCounts[str(member.id)]}**')
+            # await ctx.send(f'{ctx.author.name} voted! Used votes: **{usedVotes[str(ctx.author.id)]}** out of 5')
         except:
             await ctx.send('**An error occurred!**')
 
@@ -441,6 +450,10 @@ class MOTDCommands(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 10, commands.BucketType.guild)
     async def totalvotes(self, ctx):
+        # TEMP
+        # await ctx.send(f'Total votes are hidden right now!')
+        # return
+        # STARTS HERE
         voteLst = []
         serverEntry = await fs.getServerEntry(fs.serverPath,ctx.guild.id)
         votingEntry = await fs.getServerEntry(fs.votePath,ctx.guild.id)
@@ -460,6 +473,12 @@ class MOTDCommands(commands.Cog):
             await ctx.send('No members have been voted for.')
         logger.info(f'!totalvotes called in {ctx.guild.name} by {ctx.author.name}')
 
+
+    # shows people with votes in motd_voting.json
+    @commands.command()
+    @commands.cooldown(1, 10, commands.BucketType.guild)
+    async def stuffballotbox(self, ctx):
+        await ctx.send(f'The ballot has now been stuffed')
 
     
     '''# RANDOM
