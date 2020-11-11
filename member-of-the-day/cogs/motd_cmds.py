@@ -398,6 +398,7 @@ class MOTDCommands(commands.Cog):
         # TEMP
         #if member votes themselves
         if ctx.author.id == member.id:
+            await ctx.author.edit(nick="I TRIED VOTING MYSELF")
             await ctx.send(f'You cannot vote for yourself!')
             return
         # if member votes a bot
