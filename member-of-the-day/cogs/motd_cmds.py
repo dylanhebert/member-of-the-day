@@ -382,6 +382,13 @@ class MOTDCommands(commands.Cog):
             await ctx.send(f'There have been no picks in {ctx.guild.name}')
         logger.info(f'!servertotals called in {ctx.guild.name} by {ctx.author.name}')
 
+    # allows bots to vote
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        ctx = await self.bot.get_context(message)
+        if ctx.author.bot and '!vote' in message.content:
+            await self.bot.invoke(ctx)
+
     # members vote for someone to have a better chance at MOTD
     @commands.command()
     @commands.cooldown(1, 0.5, commands.BucketType.guild)
