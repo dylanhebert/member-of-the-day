@@ -69,6 +69,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     channel = ctx.message.channel
+    await channel.send(error)
     if isinstance(error, commands.errors.CommandNotFound):
         pass
     if isinstance(error, commands.errors.CommandOnCooldown):
@@ -107,6 +108,14 @@ async def on_guild_remove(guild):
     # delete server from DBs
     await fs.delServerDB(guild.id,guild.name)
     logger.info(f'\nServer List DB update: bot removed from {guild.name} | {guild.id}\n')
+
+
+# allows other bots to trigger voting
+@bot.event
+async def on_message(message):
+    ctx = await bot.get_context(message)
+    if ctx.author.bot and '!vote' in message.content:
+        await bot.invoke(ctx)
             
 
 bot.run(botToken, bot=True)
