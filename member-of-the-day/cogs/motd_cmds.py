@@ -276,7 +276,7 @@ class MOTDCommands(commands.Cog):
                     if any(role.id in exemptRoles for role in mem.roles):
                         pass
                     else:
-                        topScoreLst.append(f"*{mem.name}*" +"  **|**  "+ f"{str(v)}\n")
+                        topScoreLst.append(f"{str(v)}" +"  **|**  "+ f"*{mem.name}*\n")
                         counter += 1
                         if counter == 15: # how many members to show
                             break
